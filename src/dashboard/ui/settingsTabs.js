@@ -377,7 +377,7 @@ module.exports = function createSettingsTabs({ escapeHtml }) {
 
                         <div class="card">
                             <label>🐲 AUTO BOSS2 (DRAFT)</label>
-                            <div class="input-hint">Klik tombol boss otomatis dengan trigger, tombol, delay, dan cooldown yang bisa diatur. Kosongkan Guild/Channel untuk semua.</div>
+                            <div class="input-hint">Saat pesan "Guild Boss Telah Muncul" terdeteksi dan tombol Fight aktif, bot otomatis Fight. Berhenti saat boss dikalahkan/kabur (tombol mati), lalu mencatat waktu "Boss baru". Kosongkan filter untuk semua.</div>
                             <div class="toggle-row">
                                 <span>Enable Auto Boss2</span>
                                 <input type="checkbox" name="boss2Enabled" ${boss2.enabled ? 'checked' : ''}>
@@ -386,17 +386,21 @@ module.exports = function createSettingsTabs({ escapeHtml }) {
                             <input type="text" name="boss2Guilds" value="${escapeHtml((boss2.allowedGuilds || []).join(','))}" placeholder="Guild ID">
                             <label>Allowed Channels</label>
                             <input type="text" name="boss2ChannelIds" value="${escapeHtml((boss2.channelIds || []).join(','))}" placeholder="Channel ID">
-                            <label>Trigger Text</label>
-                            <input type="text" name="boss2TriggerText" value="${escapeHtml(boss2.triggerText ?? '')}" placeholder="A Guild Boss Appeared">
+                            <label>Bot Author IDs</label>
+                            <input type="text" name="boss2BotIds" value="${escapeHtml((boss2.botIds || []).join(','))}" placeholder="User ID bot boss">
+                            <label>Teks Boss Muncul</label>
+                            <input type="text" name="boss2AppearText" value="${escapeHtml(boss2.appearText || '')}" placeholder="Guild Boss Telah Muncul">
+                            <label>Teks Boss Dikalahkan</label>
+                            <input type="text" name="boss2DefeatedText" value="${escapeHtml(boss2.defeatedText || '')}" placeholder="Boss Telah Dikalahkan">
                             <label>Button Custom ID</label>
-                            <input type="text" name="boss2ButtonId" value="${escapeHtml(boss2.buttonId || '')}" placeholder="guildboss_fight">
+                            <input type="text" name="boss2ButtonId" value="${escapeHtml(boss2.buttonId || '')}" placeholder="raid:fight">
+                            <label>Jumlah Fight per Boss (1-3)</label>
+                            <input type="number" min="1" max="3" name="boss2FightsPerBoss" value="${boss2.fightsPerBoss ?? 1}" placeholder="1">
                             <label>Delay Klik (ms)</label>
                             <div class="row">
-                                <div class="col"><input type="number" min="0" name="boss2DelayMin" value="${boss2.delayMinMs ?? 0}" placeholder="Min"></div>
-                                <div class="col"><input type="number" min="0" name="boss2DelayMax" value="${boss2.delayMaxMs ?? 0}" placeholder="Max"></div>
+                                <div class="col"><input type="number" min="0" name="boss2DelayMin" value="${boss2.delayMinMs ?? 1000}" placeholder="Min"></div>
+                                <div class="col"><input type="number" min="0" name="boss2DelayMax" value="${boss2.delayMaxMs ?? 3000}" placeholder="Max"></div>
                             </div>
-                            <label>Cooldown per Guild (ms)</label>
-                            <input type="number" min="0" name="boss2Cooldown" value="${boss2.cooldownMs ?? 295000}" placeholder="295000">
                         </div>
 
                         <div class="card">

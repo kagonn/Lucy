@@ -183,11 +183,13 @@ test('POST /save persists Auto Boss2 settings and the dashboard renders them', a
                 boss2Enabled: 'on',
                 boss2Guilds: 'g1, g2',
                 boss2ChannelIds: 'c1',
-                boss2TriggerText: 'Boss Appeared',
-                boss2ButtonId: 'boss_fight',
+                boss2BotIds: 'bot1',
+                boss2AppearText: 'Guild Boss Telah Muncul',
+                boss2DefeatedText: 'Boss Telah Dikalahkan',
+                boss2ButtonId: 'raid:fight',
+                boss2FightsPerBoss: '2',
                 boss2DelayMin: '1000',
-                boss2DelayMax: '3000',
-                boss2Cooldown: '60000'
+                boss2DelayMax: '3000'
             })
         });
 
@@ -197,15 +199,17 @@ test('POST /save persists Auto Boss2 settings and the dashboard renders them', a
             enabled: true,
             allowedGuilds: ['g1', 'g2'],
             channelIds: ['c1'],
-            triggerText: 'Boss Appeared',
-            buttonId: 'boss_fight',
+            botIds: ['bot1'],
+            appearText: 'Guild Boss Telah Muncul',
+            defeatedText: 'Boss Telah Dikalahkan',
+            buttonId: 'raid:fight',
+            fightsPerBoss: 2,
             delayMinMs: 1000,
-            delayMaxMs: 3000,
-            cooldownMs: 60000
+            delayMaxMs: 3000
         });
 
         const page = await (await fetch(url, { headers: { Authorization: authHeader() } })).text();
         assert.match(page, /AUTO BOSS2/);
-        assert.match(page, /name="boss2ButtonId" value="boss_fight"/);
+        assert.match(page, /name="boss2ButtonId" value="raid:fight"/);
     });
 });

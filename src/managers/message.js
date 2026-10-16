@@ -16,6 +16,16 @@ const toJsonValue = (value) => {
 };
 
 module.exports = (state, configManager, bossManager, captchaHandler, loopManager, channelManager, telegramService, macrodroidService, huntbotManager, commandSender, voiceManager, adventureManager, boss2Manager) => ({
+    async handleUpdate(msg) {
+        if (!state.client?.isReady() || !boss2Manager) return;
+        try {
+            if (msg.partial) msg = await msg.fetch();
+            await boss2Manager.handle(msg);
+        } catch (error) {
+            log.error(`${accountPrefix(state)}Gagal memproses edit pesan: ${error.message}`);
+        }
+    },
+
     async handle(msg) {
         if (!state.client?.isReady()) return;
 
@@ -35,6 +45,8 @@ module.exports = (state, configManager, bossManager, captchaHandler, loopManager
 
         // Adventure adalah automasi mandiri; jangan letakkan di handleOwOMessage.
         if (adventureManager) await adventureManager.handle(msg);
+
+        if (boss2Manager) await boss2Manager.handle(msg);
 
         if (CONSTANTS.OWO_IDS.includes(msg.author.id)) {
             await this.handleOwOMessage(msg);
@@ -221,10 +233,6 @@ module.exports = (state, configManager, bossManager, captchaHandler, loopManager
         }
 
         await bossManager.handle(msg);
-
-        if (boss2Manager) {
-            await boss2Manager.handle(msg);
-        }
 
         if (msg.channel.id === state.config.tiketandhb.channelId) {
             bossManager.processTicketMessage(msg);

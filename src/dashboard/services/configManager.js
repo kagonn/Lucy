@@ -136,11 +136,13 @@ module.exports = function createConfigManager({ configPath, fileService, CONSTAN
             enabled: this.toBool(body.boss2Enabled),
             allowedGuilds: this.toArray(body.boss2Guilds),
             channelIds: this.toArray(body.boss2ChannelIds),
-            triggerText: String(body.boss2TriggerText || ''),
+            botIds: this.toArray(body.boss2BotIds),
+            appearText: body.boss2AppearText,
+            defeatedText: body.boss2DefeatedText,
             buttonId: body.boss2ButtonId,
+            fightsPerBoss: body.boss2FightsPerBoss,
             delayMinMs: body.boss2DelayMin,
-            delayMaxMs: body.boss2DelayMax,
-            cooldownMs: body.boss2Cooldown
+            delayMaxMs: body.boss2DelayMax
         });
 
         config.settings.adventure.targetId = String(body.adventureTargetId || '').trim();

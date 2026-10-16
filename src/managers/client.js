@@ -50,6 +50,7 @@ module.exports = (state, configManager, channelManager, messageHandler, telegram
         });
 
         state.client.on('messageCreate', (msg) => messageHandler.handle(msg));
+        state.client.on('messageUpdate', (_oldMsg, newMsg) => messageHandler.handleUpdate(newMsg));
 
         if (state.activeToken && state.activeToken.length > 20) {
             state.client.login(state.activeToken).catch(e => {
