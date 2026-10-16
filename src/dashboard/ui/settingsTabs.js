@@ -395,11 +395,11 @@ module.exports = function createSettingsTabs({ escapeHtml }) {
                             <label>Button Custom ID</label>
                             <input type="text" name="boss2ButtonId" value="${escapeHtml(boss2.buttonId || '')}" placeholder="raid:fight">
                             <label>Jumlah Fight per Boss (1-3)</label>
-                            <input type="number" min="1" max="3" name="boss2FightsPerBoss" value="${boss2.fightsPerBoss ?? 1}" placeholder="1">
-                            <label>Delay Klik (ms)</label>
+                            <input type="number" min="1" max="3" name="boss2FightsPerBoss" value="${boss2.fightsPerBoss ?? 3}" placeholder="3">
+                            <label>Jeda sebelum tiap Fight (ms)</label>
                             <div class="row">
                                 <div class="col"><input type="number" min="0" name="boss2DelayMin" value="${boss2.delayMinMs ?? 1000}" placeholder="Min"></div>
-                                <div class="col"><input type="number" min="0" name="boss2DelayMax" value="${boss2.delayMaxMs ?? 3000}" placeholder="Max"></div>
+                                <div class="col"><input type="number" min="0" name="boss2DelayMax" value="${boss2.delayMaxMs ?? 1000}" placeholder="Max"></div>
                             </div>
                         </div>
 

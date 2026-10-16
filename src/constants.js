@@ -12,10 +12,10 @@ module.exports = {
         appearText: 'Guild Boss Telah Muncul',
         defeatedText: 'Boss Telah Dikalahkan',
         buttonId: 'raid:fight',
-        fightsPerBoss: 1,
+        fightsPerBoss: 3,
         maxFightsPerBoss: 3,
         delayMinMs: 1000,
-        delayMaxMs: 3000
+        delayMaxMs: 1000
     },
     RESPONSE_TIMEOUT_MS: 40000,
     TICKET_CHECK_DELAY_MS: 15000,

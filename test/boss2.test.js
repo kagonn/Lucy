@@ -17,11 +17,17 @@ const appearComponents = ({ disabled = false } = {}) => [{
     ]
 }];
 
+const RESET_AT = NEXT_SPAWN + 7200;
+
+// Shape of a real "Guild Boss Telah Dikalahkan!" message (note the ⌛ icon and the extra reset timestamp).
 const defeatedComponents = () => [{
     type: 17,
     components: [
-        { type: 10, content: '## Boss Telah Dikalahkan!' },
-        { type: 10, content: `⏳ Boss baru <t:${NEXT_SPAWN}:R>` },
+        { type: 10, content: '## <:lucy_yay:1550898994111058040> Guild Boss Telah Dikalahkan!' },
+        { type: 14, spacing: 1, divider: true },
+        { type: 10, content: '## 10 Damage Terbesar\n1. `94,448` - **@xruntr** `⚔️⚔️⚔️`' },
+        { type: 14, spacing: 1, divider: true },
+        { type: 10, content: `☠ Dikalahkan 7 menit yang lalu\n⚔ **8** fighter • ☠ **296,465** damage diberikan\n⌛ Boss baru <t:${NEXT_SPAWN}:R>\n-# Fight kamu: 3/3 • Damage kamu: 29,763\n-# Limit fight reset <t:${RESET_AT}:R> (reset daily jam 12 malam).` },
         { type: 1, components: [{ type: 2, custom_id: 'raid:fight', label: 'Fight!', style: 4, disabled: true }] }
     ]
 }];
@@ -70,27 +76,44 @@ test('parseRaidMessage reads appear trigger, active button, end timestamp and fi
     assert.equal(info.fightsMax, 3);
 });
 
+test('parseRaidMessage reads the real defeat message: next boss time, not the daily reset time', () => {
+    const info = parseRaidMessage({ content: '', embeds: [], components: defeatedComponents() }, normalizeBoss2Settings({}));
+    assert.equal(info.isAppear, false);
+    assert.equal(info.isDefeated, true);
+    assert.equal(info.buttonActive, false);
+    assert.equal(info.nextSpawnAt, NEXT_SPAWN * 1000);
+    assert.equal(info.endsAt, null);
+    assert.equal(info.fightsUsed, 3);
+});
+
+test('Auto Boss2 defaults to 3 fights per boss with a 1 second delay', () => {
+    const settings = normalizeBoss2Settings({});
+    assert.equal(settings.fightsPerBoss, 3);
+    assert.equal(settings.delayMinMs, 1000);
+    assert.equal(settings.delayMaxMs, 1000);
+});
+
 test('Auto Boss2 fights when the boss appears and records the end time', async () => {
     const { manager, state } = setup();
     const { msg, clicks } = createMessage(appearComponents());
 
     assert.equal(await manager.handle(msg), 'fought');
-    assert.deepEqual(clicks, ['raid:fight']);
+    assert.deepEqual(clicks, ['raid:fight', 'raid:fight', 'raid:fight']);
     const raid = manager.getRaidState('guild-1');
     assert.equal(raid.status, 'active');
     assert.equal(raid.endsAt, ENDS_AT * 1000);
 
     await manager.handle(msg);
-    assert.deepEqual(clicks, ['raid:fight']);
+    assert.equal(clicks.length, 3);
     manager.stop();
     assert.equal(state.boss2Timers.size, 0);
 });
 
 test('Auto Boss2 uses the configured number of fights per boss', async () => {
-    const { manager } = setup({ fightsPerBoss: 3 });
+    const { manager } = setup({ fightsPerBoss: 1 });
     const { msg, clicks } = createMessage(appearComponents());
     await manager.handle(msg);
-    assert.equal(clicks.length, 3);
+    assert.equal(clicks.length, 1);
     manager.stop();
 });
 
@@ -108,7 +131,7 @@ test('Auto Boss2 stops on defeat and records the next boss timestamp', async () 
 
     const nextAppear = createMessage(appearComponents(), { id: 'raid-msg-2' });
     assert.equal(await manager.handle(nextAppear.msg), 'fought');
-    assert.deepEqual(nextAppear.clicks, ['raid:fight']);
+    assert.equal(nextAppear.clicks.length, 3);
     assert.equal(manager.getRaidState('guild-1').nextSpawnAt, null);
     manager.stop();
 });
