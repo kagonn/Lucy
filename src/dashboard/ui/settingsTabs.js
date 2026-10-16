@@ -121,7 +121,7 @@ module.exports = function createSettingsTabs({ escapeHtml }) {
         `;
     }
 
-    function renderAdvancedSettings({ config, huntbot, control, rotation, boss, adventure, msgFilter, messageDebug, voice, captchaConfig, nopechaKey, twoCaptchaKey, fallbackSolvers }) {
+    function renderAdvancedSettings({ config, huntbot, control, rotation, boss, boss2, adventure, msgFilter, messageDebug, voice, captchaConfig, nopechaKey, twoCaptchaKey, fallbackSolvers }) {
         return `
                     <div id="tab-notifications" class="tab-content">
                         <div class="category-heading">
@@ -373,6 +373,34 @@ module.exports = function createSettingsTabs({ escapeHtml }) {
                             </div>
                             <label>Allowed Guilds</label>
                             <input type="text" name="bossGuilds" value="${(boss.allowedGuilds || []).join(',')}" placeholder="Guild ID">
+                        </div>
+
+                        <div class="card">
+                            <label>🐲 AUTO BOSS2 (DRAFT)</label>
+                            <div class="input-hint">Saat pesan "Guild Boss Telah Muncul" terdeteksi dan tombol Fight aktif, bot otomatis Fight. Berhenti saat boss dikalahkan/kabur (tombol mati), lalu mencatat waktu "Boss baru". Kosongkan filter untuk semua.</div>
+                            <div class="toggle-row">
+                                <span>Enable Auto Boss2</span>
+                                <input type="checkbox" name="boss2Enabled" ${boss2.enabled ? 'checked' : ''}>
+                            </div>
+                            <label>Allowed Guilds</label>
+                            <input type="text" name="boss2Guilds" value="${escapeHtml((boss2.allowedGuilds || []).join(','))}" placeholder="Guild ID">
+                            <label>Allowed Channels</label>
+                            <input type="text" name="boss2ChannelIds" value="${escapeHtml((boss2.channelIds || []).join(','))}" placeholder="Channel ID">
+                            <label>Bot Author IDs</label>
+                            <input type="text" name="boss2BotIds" value="${escapeHtml((boss2.botIds || []).join(','))}" placeholder="User ID bot boss">
+                            <label>Teks Boss Muncul</label>
+                            <input type="text" name="boss2AppearText" value="${escapeHtml(boss2.appearText || '')}" placeholder="Guild Boss Telah Muncul">
+                            <label>Teks Boss Dikalahkan</label>
+                            <input type="text" name="boss2DefeatedText" value="${escapeHtml(boss2.defeatedText || '')}" placeholder="Boss Telah Dikalahkan">
+                            <label>Button Custom ID</label>
+                            <input type="text" name="boss2ButtonId" value="${escapeHtml(boss2.buttonId || '')}" placeholder="raid:fight">
+                            <label>Jumlah Fight per Boss (1-3)</label>
+                            <input type="number" min="1" max="3" name="boss2FightsPerBoss" value="${boss2.fightsPerBoss ?? 3}" placeholder="3">
+                            <label>Jeda sebelum tiap Fight (ms)</label>
+                            <div class="row">
+                                <div class="col"><input type="number" min="0" name="boss2DelayMin" value="${boss2.delayMinMs ?? 1000}" placeholder="Min"></div>
+                                <div class="col"><input type="number" min="0" name="boss2DelayMax" value="${boss2.delayMaxMs ?? 1000}" placeholder="Max"></div>
+                            </div>
                         </div>
 
                         <div class="card">

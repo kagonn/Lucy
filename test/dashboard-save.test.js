@@ -167,3 +167,49 @@ test('dashboard renders Message Debug controls and raw JSON output', async () =>
         assert.match(html, /id="clearMessageDebugButton"/);
     });
 });
+
+test('POST /save persists Auto Boss2 settings and the dashboard renders them', async () => {
+    await withDashboard(async (url, baseDir) => {
+        const response = await fetch(`${url}/save`, {
+            method: 'POST',
+            headers: {
+                Authorization: authHeader(),
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                'X-Requested-With': 'XMLHttpRequest',
+                Accept: 'application/json'
+            },
+            body: new URLSearchParams({
+                action: 'save',
+                boss2Enabled: 'on',
+                boss2Guilds: 'g1, g2',
+                boss2ChannelIds: 'c1',
+                boss2BotIds: 'bot1',
+                boss2AppearText: 'Guild Boss Telah Muncul',
+                boss2DefeatedText: 'Boss Telah Dikalahkan',
+                boss2ButtonId: 'raid:fight',
+                boss2FightsPerBoss: '2',
+                boss2DelayMin: '1000',
+                boss2DelayMax: '3000'
+            })
+        });
+
+        assert.equal(response.status, 200);
+        const savedConfig = JSON.parse(fs.readFileSync(path.join(baseDir, 'config.json'), 'utf8'));
+        assert.deepEqual(savedConfig.settings.boss2, {
+            enabled: true,
+            allowedGuilds: ['g1', 'g2'],
+            channelIds: ['c1'],
+            botIds: ['bot1'],
+            appearText: 'Guild Boss Telah Muncul',
+            defeatedText: 'Boss Telah Dikalahkan',
+            buttonId: 'raid:fight',
+            fightsPerBoss: 2,
+            delayMinMs: 1000,
+            delayMaxMs: 3000
+        });
+
+        const page = await (await fetch(url, { headers: { Authorization: authHeader() } })).text();
+        assert.match(page, /AUTO BOSS2/);
+        assert.match(page, /name="boss2ButtonId" value="raid:fight"/);
+    });
+});
