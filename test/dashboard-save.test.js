@@ -213,3 +213,50 @@ test('POST /save persists Auto Boss2 settings and the dashboard renders them', a
         assert.match(page, /name="boss2ButtonId" value="raid:fight"/);
     });
 });
+
+test('POST /save persists Auto Use Gems settings and the dashboard renders them', async () => {
+    await withDashboard(async (url, baseDir) => {
+        const response = await fetch(`${url}/save`, {
+            method: 'POST',
+            headers: {
+                Authorization: authHeader(),
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                'X-Requested-With': 'XMLHttpRequest',
+                Accept: 'application/json'
+            },
+            body: new URLSearchParams({
+                action: 'save',
+                gemsEnabled: 'on',
+                gemsChannelId: 'c1',
+                gemsBotIds: 'lucy',
+                gemsAccountName: 'neozen',
+                gemsTriggerText: 'menghabiskan 5 <:lucent:1523362382355759266>',
+                gemsInventoryCommand: 'linv',
+                gemsLootboxItem: '049',
+                gemsLootboxCommand: 'llb f all',
+                gemsRequired: '57, 71, 78',
+                gemsOptional: '85',
+                gemsUseCommand: 'luse',
+                gemsRecheckMinutes: '5',
+                gemsDelayMin: '1000',
+                gemsDelayMax: '2000'
+            })
+        });
+
+        assert.equal(response.status, 200);
+        const savedConfig = JSON.parse(fs.readFileSync(path.join(baseDir, 'config.json'), 'utf8'));
+        const gems = savedConfig.settings.gems;
+        assert.equal(gems.enabled, true);
+        assert.equal(gems.channelId, 'c1');
+        assert.deepEqual(gems.botIds, ['lucy']);
+        assert.equal(gems.accountName, 'neozen');
+        assert.deepEqual(gems.requiredGems, ['57', '71', '78']);
+        assert.deepEqual(gems.optionalGems, ['85']);
+        assert.equal(gems.recheckMinutes, 5);
+        assert.equal(gems.delayMaxMs, 2000);
+
+        const page = await (await fetch(url, { headers: { Authorization: authHeader() } })).text();
+        assert.match(page, /AUTO USE GEMS/);
+        assert.match(page, /name="gemsLootboxCommand" value="llb f all"/);
+    });
+});

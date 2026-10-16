@@ -8,6 +8,8 @@ const createBossManager = require('../managers/boss');
 const createBoss2Manager = require('../managers/boss2');
 const { normalizeBoss2Settings } = createBoss2Manager;
 const createAdventureManager = require('../managers/adventure');
+const createGemsManager = require('../managers/gems');
+const { normalizeGemsSettings } = createGemsManager;
 const createCaptchaHandler = require('../managers/captcha');
 const createCommandSender = require('../managers/command');
 const createLoopManager = require('../managers/loop');
@@ -41,6 +43,7 @@ const ensureRuntimeShape = (config = {}) => {
     config.settings.control = config.settings.control || { start: 'wcash', pause: 'wbuy 1', allowIds: [] };
     config.settings.boss = config.settings.boss || { enabled: true, allowedGuilds: [] };
     config.settings.boss2 = normalizeBoss2Settings(config.settings.boss2);
+    config.settings.gems = normalizeGemsSettings(config.settings.gems);
     config.settings.adventure = config.settings.adventure || { enabled: false, targetId: '', channelId: '', guildId: '' };
     config.settings.messageFilter = config.settings.messageFilter || { enabled: true, channelIds: [], guildIds: [], debug: false, debugOnlyOwO: false };
     config.settings.messageDebug = config.settings.messageDebug || { enabled: false, targetId: '', channelId: '', guildId: '' };
@@ -166,6 +169,10 @@ const createRuntimeConfigManager = (state, filePath) => ({
         return normalizeBoss2Settings(state.config.settings?.boss2);
     },
 
+    getGemsSettings() {
+        return normalizeGemsSettings(state.config.settings?.gems);
+    },
+
     getAdventureSettings() {
         const adventure = state.config.settings?.adventure || {};
         return {
@@ -232,6 +239,7 @@ module.exports = function createAccountRuntime({ config, filePath, sharedStats }
     const emergencyHandler = createEmergencyHandler(state, configManager, loopManagerWrapper, channelManager, telegramService, macrodroidService);
     const commandSender = createCommandSender(state, channelManager, emergencyHandler);
     const adventureManager = createAdventureManager(state, configManager, commandSender);
+    const gemsManager = createGemsManager(state, configManager, commandSender);
     const loopManager = createLoopManager(state, commandSender);
     const captchaHandler = createCaptchaHandler(state, configManager, loopManager, telegramService, channelManager, macrodroidService);
     const voiceManager = createVoiceManager(state, configManager);
@@ -249,7 +257,8 @@ module.exports = function createAccountRuntime({ config, filePath, sharedStats }
         commandSender,
         voiceManager,
         adventureManager,
-        boss2Manager
+        boss2Manager,
+        gemsManager
     );
     const clientManager = createClientManager(state, configManager, channelManager, messageHandler, telegramService, huntbotManager, voiceManager);
 
@@ -460,6 +469,7 @@ module.exports = function createAccountRuntime({ config, filePath, sharedStats }
                 bossManager.stop();
             }
             boss2Manager.stop();
+            gemsManager.stop();
             adventureManager.stop();
             if (state.client) {
                 try { state.client.destroy(); } catch (error) { log.warn(`${accountPrefix(state)}Gagal destroy client: ${error.message}`); }

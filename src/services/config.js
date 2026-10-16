@@ -1,4 +1,5 @@
 const { normalizeBoss2Settings } = require('../managers/boss2');
+const { normalizeGemsSettings } = require('../managers/gems');
 const fs = require('fs');
 const CONSTANTS = require('../constants');
 const { safeJsonStringify } = require('../utils');
@@ -53,6 +54,10 @@ module.exports = (state) => ({
 
     getBoss2Settings() {
         return normalizeBoss2Settings(state.config.settings?.boss2);
+    },
+
+    getGemsSettings() {
+        return normalizeGemsSettings(state.config.settings?.gems);
     },
 
     getAdventureSettings() {

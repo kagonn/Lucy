@@ -17,6 +17,25 @@ module.exports = {
         delayMinMs: 1000,
         delayMaxMs: 1000
     },
+    GEMS_DEFAULTS: {
+        enabled: false,
+        channelId: '',
+        botIds: [],
+        accountName: '',
+        triggerText: 'menghabiskan 5 <:lucent:1523362382355759266>',
+        inventoryCommand: 'linv',
+        lootboxItem: '049',
+        lootboxCommand: 'llb f all',
+        requiredGems: ['57', '71', '78'],
+        optionalGems: ['85'],
+        useCommand: 'luse',
+        recheckMinutes: 5,
+        delayMinMs: 1500,
+        delayMaxMs: 3000,
+        lootboxWaitMs: 5000,
+        maxLootboxOpens: 3,
+        inventoryTimeoutMs: 60000
+    },
     RESPONSE_TIMEOUT_MS: 40000,
     TICKET_CHECK_DELAY_MS: 15000,
     CAPTCHA_KEYWORDS: [
