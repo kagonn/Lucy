@@ -4,6 +4,16 @@ module.exports = {
     TICKET_CHANNEL_ID: '1499159557132390470',
     OWO_IDS: ['408785106942164992','1343111797057654856'], // OwO Main & Beta
     BOSS_COOLDOWN_MS: 295000, // 4m 55s
+    BOSS2_DEFAULTS: {
+        enabled: false,
+        allowedGuilds: [],
+        channelIds: [],
+        triggerText: 'A Guild Boss Appeared',
+        buttonId: 'guildboss_fight',
+        delayMinMs: 0,
+        delayMaxMs: 0,
+        cooldownMs: 295000
+    },
     RESPONSE_TIMEOUT_MS: 40000,
     TICKET_CHECK_DELAY_MS: 15000,
     CAPTCHA_KEYWORDS: [

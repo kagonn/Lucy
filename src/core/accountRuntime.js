@@ -5,6 +5,8 @@ const createTelegramService = require('../services/telegram');
 const createMacrodroidService = require('../services/macrodroidService');
 const createChannelManager = require('../managers/channel');
 const createBossManager = require('../managers/boss');
+const createBoss2Manager = require('../managers/boss2');
+const { normalizeBoss2Settings } = createBoss2Manager;
 const createAdventureManager = require('../managers/adventure');
 const createCaptchaHandler = require('../managers/captcha');
 const createCommandSender = require('../managers/command');
@@ -38,6 +40,7 @@ const ensureRuntimeShape = (config = {}) => {
     config.settings.channelRotation = config.settings.channelRotation || { enabled: false, minMs: 180000, maxMs: 360000 };
     config.settings.control = config.settings.control || { start: 'wcash', pause: 'wbuy 1', allowIds: [] };
     config.settings.boss = config.settings.boss || { enabled: true, allowedGuilds: [] };
+    config.settings.boss2 = normalizeBoss2Settings(config.settings.boss2);
     config.settings.adventure = config.settings.adventure || { enabled: false, targetId: '', channelId: '', guildId: '' };
     config.settings.messageFilter = config.settings.messageFilter || { enabled: true, channelIds: [], guildIds: [], debug: false, debugOnlyOwO: false };
     config.settings.messageDebug = config.settings.messageDebug || { enabled: false, targetId: '', channelId: '', guildId: '' };
@@ -159,6 +162,10 @@ const createRuntimeConfigManager = (state, filePath) => ({
         };
     },
 
+    getBoss2Settings() {
+        return normalizeBoss2Settings(state.config.settings?.boss2);
+    },
+
     getAdventureSettings() {
         const adventure = state.config.settings?.adventure || {};
         return {
@@ -221,6 +228,7 @@ module.exports = function createAccountRuntime({ config, filePath, sharedStats }
         startAll: () => loopManager && loopManager.startAll()
     };
     const bossManager = createBossManager(state, configManager, telegramService);
+    const boss2Manager = createBoss2Manager(state, configManager);
     const emergencyHandler = createEmergencyHandler(state, configManager, loopManagerWrapper, channelManager, telegramService, macrodroidService);
     const commandSender = createCommandSender(state, channelManager, emergencyHandler);
     const adventureManager = createAdventureManager(state, configManager, commandSender);
@@ -240,7 +248,8 @@ module.exports = function createAccountRuntime({ config, filePath, sharedStats }
         huntbotManager,
         commandSender,
         voiceManager,
-        adventureManager
+        adventureManager,
+        boss2Manager
     );
     const clientManager = createClientManager(state, configManager, channelManager, messageHandler, telegramService, huntbotManager, voiceManager);
 
@@ -450,6 +459,7 @@ module.exports = function createAccountRuntime({ config, filePath, sharedStats }
             if (bossManager && typeof bossManager.stop === 'function') {
                 bossManager.stop();
             }
+            boss2Manager.stop();
             adventureManager.stop();
             if (state.client) {
                 try { state.client.destroy(); } catch (error) { log.warn(`${accountPrefix(state)}Gagal destroy client: ${error.message}`); }

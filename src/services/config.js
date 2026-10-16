@@ -1,3 +1,4 @@
+const { normalizeBoss2Settings } = require('../managers/boss2');
 const fs = require('fs');
 const CONSTANTS = require('../constants');
 const { safeJsonStringify } = require('../utils');
@@ -48,6 +49,10 @@ module.exports = (state) => ({
             enabled: boss.enabled === true,
             allowedGuilds: Array.isArray(boss.allowedGuilds) ? boss.allowedGuilds : []
         };
+    },
+
+    getBoss2Settings() {
+        return normalizeBoss2Settings(state.config.settings?.boss2);
     },
 
     getAdventureSettings() {

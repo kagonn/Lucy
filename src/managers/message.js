@@ -15,7 +15,7 @@ const toJsonValue = (value) => {
     }
 };
 
-module.exports = (state, configManager, bossManager, captchaHandler, loopManager, channelManager, telegramService, macrodroidService, huntbotManager, commandSender, voiceManager, adventureManager) => ({
+module.exports = (state, configManager, bossManager, captchaHandler, loopManager, channelManager, telegramService, macrodroidService, huntbotManager, commandSender, voiceManager, adventureManager, boss2Manager) => ({
     async handle(msg) {
         if (!state.client?.isReady()) return;
 
@@ -221,6 +221,10 @@ module.exports = (state, configManager, bossManager, captchaHandler, loopManager
         }
 
         await bossManager.handle(msg);
+
+        if (boss2Manager) {
+            await boss2Manager.handle(msg);
+        }
 
         if (msg.channel.id === state.config.tiketandhb.channelId) {
             bossManager.processTicketMessage(msg);

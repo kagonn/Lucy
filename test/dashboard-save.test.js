@@ -167,3 +167,45 @@ test('dashboard renders Message Debug controls and raw JSON output', async () =>
         assert.match(html, /id="clearMessageDebugButton"/);
     });
 });
+
+test('POST /save persists Auto Boss2 settings and the dashboard renders them', async () => {
+    await withDashboard(async (url, baseDir) => {
+        const response = await fetch(`${url}/save`, {
+            method: 'POST',
+            headers: {
+                Authorization: authHeader(),
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                'X-Requested-With': 'XMLHttpRequest',
+                Accept: 'application/json'
+            },
+            body: new URLSearchParams({
+                action: 'save',
+                boss2Enabled: 'on',
+                boss2Guilds: 'g1, g2',
+                boss2ChannelIds: 'c1',
+                boss2TriggerText: 'Boss Appeared',
+                boss2ButtonId: 'boss_fight',
+                boss2DelayMin: '1000',
+                boss2DelayMax: '3000',
+                boss2Cooldown: '60000'
+            })
+        });
+
+        assert.equal(response.status, 200);
+        const savedConfig = JSON.parse(fs.readFileSync(path.join(baseDir, 'config.json'), 'utf8'));
+        assert.deepEqual(savedConfig.settings.boss2, {
+            enabled: true,
+            allowedGuilds: ['g1', 'g2'],
+            channelIds: ['c1'],
+            triggerText: 'Boss Appeared',
+            buttonId: 'boss_fight',
+            delayMinMs: 1000,
+            delayMaxMs: 3000,
+            cooldownMs: 60000
+        });
+
+        const page = await (await fetch(url, { headers: { Authorization: authHeader() } })).text();
+        assert.match(page, /AUTO BOSS2/);
+        assert.match(page, /name="boss2ButtonId" value="boss_fight"/);
+    });
+});

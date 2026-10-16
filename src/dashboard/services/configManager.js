@@ -1,3 +1,4 @@
+const { normalizeBoss2Settings } = require('../../managers/boss2');
 module.exports = function createConfigManager({ configPath, fileService, CONSTANTS }) {
     return {
     get() {
@@ -30,6 +31,7 @@ module.exports = function createConfigManager({ configPath, fileService, CONSTAN
         config.settings.control = config.settings.control || { start: 'wcash', pause: 'wbuy 1', allowIds: [] };
         config.settings.channelRotation = config.settings.channelRotation || { enabled: false, minMs: 180000, maxMs: 360000 };
         config.settings.boss = config.settings.boss || { enabled: true, allowedGuilds: [] };
+        config.settings.boss2 = normalizeBoss2Settings(config.settings.boss2);
         config.settings.adventure = config.settings.adventure || { enabled: false, targetId: '', channelId: '', guildId: '' };
         config.settings.messageFilter = config.settings.messageFilter || { enabled: true, channelIds: [], guildIds: [], debug: false, debugOnlyOwO: false };
         config.settings.messageDebug = config.settings.messageDebug || { enabled: false, targetId: '', channelId: '', guildId: '' };
@@ -129,6 +131,17 @@ module.exports = function createConfigManager({ configPath, fileService, CONSTAN
 
         config.settings.boss.enabled = this.toBool(body.bossEnabled);
         config.settings.boss.allowedGuilds = this.toArray(body.bossGuilds);
+
+        config.settings.boss2 = normalizeBoss2Settings({
+            enabled: this.toBool(body.boss2Enabled),
+            allowedGuilds: this.toArray(body.boss2Guilds),
+            channelIds: this.toArray(body.boss2ChannelIds),
+            triggerText: String(body.boss2TriggerText || ''),
+            buttonId: body.boss2ButtonId,
+            delayMinMs: body.boss2DelayMin,
+            delayMaxMs: body.boss2DelayMax,
+            cooldownMs: body.boss2Cooldown
+        });
 
         config.settings.adventure.targetId = String(body.adventureTargetId || '').trim();
         config.settings.adventure.channelId = String(body.adventureChannelId || '').trim();
