@@ -121,7 +121,7 @@ module.exports = function createSettingsTabs({ escapeHtml }) {
         `;
     }
 
-    function renderAdvancedSettings({ config, huntbot, control, rotation, boss, boss2, adventure, msgFilter, messageDebug, voice, captchaConfig, nopechaKey, twoCaptchaKey, fallbackSolvers }) {
+    function renderAdvancedSettings({ config, huntbot, control, rotation, boss, boss2, gems = {}, adventure, msgFilter, messageDebug, voice, captchaConfig, nopechaKey, twoCaptchaKey, fallbackSolvers }) {
         return `
                     <div id="tab-notifications" class="tab-content">
                         <div class="category-heading">
@@ -400,6 +400,42 @@ module.exports = function createSettingsTabs({ escapeHtml }) {
                             <div class="row">
                                 <div class="col"><input type="number" min="0" name="boss2DelayMin" value="${boss2.delayMinMs ?? 1000}" placeholder="Min"></div>
                                 <div class="col"><input type="number" min="0" name="boss2DelayMax" value="${boss2.delayMaxMs ?? 1000}" placeholder="Max"></div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <label>💎 AUTO USE GEMS</label>
+                            <div class="input-hint">Saat pesan "| nama** menghabiskan 5 lucent" terdeteksi: kirim cek inventaris. Jika ada item lootbox → buka lootbox lalu cek lagi. Jika gems wajib lengkap → pakai (gems opsional ikut dipakai jika ada). Jika tidak lengkap → cek inventaris ulang tiap X menit sampai lengkap.</div>
+                            <div class="toggle-row">
+                                <span>Enable Auto Use Gems</span>
+                                <input type="checkbox" name="gemsEnabled" ${gems.enabled ? 'checked' : ''}>
+                            </div>
+                            <label>Channel ID (kosong = channel pesan trigger)</label>
+                            <input type="text" name="gemsChannelId" value="${escapeHtml(gems.channelId || '')}" placeholder="Channel ID">
+                            <label>Bot Author IDs (kosong = semua)</label>
+                            <input type="text" name="gemsBotIds" value="${escapeHtml((gems.botIds || []).join(','))}" placeholder="User ID bot Lucy">
+                            <label>Nama Akun (kosong = otomatis dari username/nickname)</label>
+                            <input type="text" name="gemsAccountName" value="${escapeHtml(gems.accountName || '')}" placeholder="neozen">
+                            <label>Teks Trigger Gems Habis</label>
+                            <input type="text" name="gemsTriggerText" value="${escapeHtml(gems.triggerText || '')}" placeholder="menghabiskan 5 <:lucent:1523362382355759266>">
+                            <label>Command Cek Inventaris</label>
+                            <input type="text" name="gemsInventoryCommand" value="${escapeHtml(gems.inventoryCommand || '')}" placeholder="linv">
+                            <div class="row">
+                                <div class="col"><label>Kode Item Lootbox</label><input type="text" name="gemsLootboxItem" value="${escapeHtml(gems.lootboxItem || '')}" placeholder="049"></div>
+                                <div class="col"><label>Command Lootbox</label><input type="text" name="gemsLootboxCommand" value="${escapeHtml(gems.lootboxCommand || '')}" placeholder="llb f all"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col"><label>Gems Wajib</label><input type="text" name="gemsRequired" value="${escapeHtml((gems.requiredGems || []).join(','))}" placeholder="57,71,78"></div>
+                                <div class="col"><label>Gems Opsional</label><input type="text" name="gemsOptional" value="${escapeHtml((gems.optionalGems || []).join(','))}" placeholder="85"></div>
+                            </div>
+                            <label>Command Pakai Gems</label>
+                            <input type="text" name="gemsUseCommand" value="${escapeHtml(gems.useCommand || '')}" placeholder="luse">
+                            <label>Cek Ulang Inventaris (menit)</label>
+                            <input type="number" min="1" name="gemsRecheckMinutes" value="${gems.recheckMinutes ?? 5}" placeholder="5">
+                            <label>Jeda sebelum kirim command (ms)</label>
+                            <div class="row">
+                                <div class="col"><input type="number" min="0" name="gemsDelayMin" value="${gems.delayMinMs ?? 1500}" placeholder="Min"></div>
+                                <div class="col"><input type="number" min="0" name="gemsDelayMax" value="${gems.delayMaxMs ?? 3000}" placeholder="Max"></div>
                             </div>
                         </div>
 

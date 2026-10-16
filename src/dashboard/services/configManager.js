@@ -1,4 +1,5 @@
 const { normalizeBoss2Settings } = require('../../managers/boss2');
+const { normalizeGemsSettings } = require('../../managers/gems');
 module.exports = function createConfigManager({ configPath, fileService, CONSTANTS }) {
     return {
     get() {
@@ -32,6 +33,7 @@ module.exports = function createConfigManager({ configPath, fileService, CONSTAN
         config.settings.channelRotation = config.settings.channelRotation || { enabled: false, minMs: 180000, maxMs: 360000 };
         config.settings.boss = config.settings.boss || { enabled: true, allowedGuilds: [] };
         config.settings.boss2 = normalizeBoss2Settings(config.settings.boss2);
+        config.settings.gems = normalizeGemsSettings(config.settings.gems);
         config.settings.adventure = config.settings.adventure || { enabled: false, targetId: '', channelId: '', guildId: '' };
         config.settings.messageFilter = config.settings.messageFilter || { enabled: true, channelIds: [], guildIds: [], debug: false, debugOnlyOwO: false };
         config.settings.messageDebug = config.settings.messageDebug || { enabled: false, targetId: '', channelId: '', guildId: '' };
@@ -143,6 +145,24 @@ module.exports = function createConfigManager({ configPath, fileService, CONSTAN
             fightsPerBoss: body.boss2FightsPerBoss,
             delayMinMs: body.boss2DelayMin,
             delayMaxMs: body.boss2DelayMax
+        });
+
+        config.settings.gems = normalizeGemsSettings({
+            ...config.settings.gems,
+            enabled: this.toBool(body.gemsEnabled),
+            channelId: body.gemsChannelId,
+            botIds: this.toArray(body.gemsBotIds),
+            accountName: body.gemsAccountName,
+            triggerText: body.gemsTriggerText,
+            inventoryCommand: body.gemsInventoryCommand,
+            lootboxItem: body.gemsLootboxItem,
+            lootboxCommand: body.gemsLootboxCommand,
+            requiredGems: body.gemsRequired,
+            optionalGems: body.gemsOptional ?? '',
+            useCommand: body.gemsUseCommand,
+            recheckMinutes: body.gemsRecheckMinutes,
+            delayMinMs: body.gemsDelayMin,
+            delayMaxMs: body.gemsDelayMax
         });
 
         config.settings.adventure.targetId = String(body.adventureTargetId || '').trim();

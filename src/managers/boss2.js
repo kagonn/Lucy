@@ -277,4 +277,6 @@ const createBoss2Manager = (state, configManager) => {
 
 createBoss2Manager.normalizeBoss2Settings = normalizeBoss2Settings;
 createBoss2Manager.parseRaidMessage = parseRaidMessage;
+createBoss2Manager.collectTexts = collectTexts;
+createBoss2Manager.toPlainData = toPlainData;
 module.exports = createBoss2Manager;

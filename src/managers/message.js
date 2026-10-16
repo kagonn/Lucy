@@ -15,7 +15,7 @@ const toJsonValue = (value) => {
     }
 };
 
-module.exports = (state, configManager, bossManager, captchaHandler, loopManager, channelManager, telegramService, macrodroidService, huntbotManager, commandSender, voiceManager, adventureManager, boss2Manager) => ({
+module.exports = (state, configManager, bossManager, captchaHandler, loopManager, channelManager, telegramService, macrodroidService, huntbotManager, commandSender, voiceManager, adventureManager, boss2Manager, gemsManager) => ({
     async handleUpdate(msg) {
         if (!state.client?.isReady() || !boss2Manager) return;
         try {
@@ -47,6 +47,8 @@ module.exports = (state, configManager, bossManager, captchaHandler, loopManager
         if (adventureManager) await adventureManager.handle(msg);
 
         if (boss2Manager) await boss2Manager.handle(msg);
+
+        if (gemsManager) await gemsManager.handle(msg);
 
         if (CONSTANTS.OWO_IDS.includes(msg.author.id)) {
             await this.handleOwOMessage(msg);
