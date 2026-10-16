@@ -49,10 +49,10 @@
       "token": "",
       "chatId": ""
     },
-    "battle": true,
+    "battle": false,
     "hunt": false,
-    "pray": true,
-    "custom": true,
+    "pray": false,
+    "custom": false,
     "text1": "owo",
     "text2": "",
     "autoResume": false,
@@ -99,7 +99,7 @@
   },
   "token": "",
   "captcha": {
-    "enabled": true,
+    "enabled": false,
     "primarySolver": "NopechaSolver",
     "fallbackSolvers": [],
     "maxTotalTimeMs": 600000,
@@ -112,6 +112,32 @@
   },
   "multiAccount": {
     "enabled": true,
-    "maxAccounts": 1
-  }
+    "maxAccounts": 3
+  },
+  "otherCommands": [
+    {
+      "text": "",
+      "delayMs": 5000,
+      "count": 1,
+      "channelId": "",
+      "captchaEnabled": true,
+      "enabled": false
+    },
+    {
+      "text": "",
+      "delayMs": 5000,
+      "count": 1,
+      "channelId": "",
+      "captchaEnabled": true,
+      "enabled": false
+    },
+    {
+      "text": "",
+      "delayMs": 5000,
+      "count": 1,
+      "channelId": "",
+      "captchaEnabled": true,
+      "enabled": false
+    }
+  ]
 }

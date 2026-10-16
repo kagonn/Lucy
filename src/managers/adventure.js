@@ -157,20 +157,29 @@ scheduleNextCommand() {
         }
 
         const exploreButton = this.findButton(msg.components, 'adv:explore');
+        
+if (exploreButton) {
+    // Explore sedang disabled → hentikan Adventure sepenuhnya
+    if (exploreButton.disabled === true) {
+        this.stopTimer();
+        state.adventureActive = false;
 
-        if (exploreButton && exploreButton.disabled !== true) {
-            const buttonId = exploreButton.custom_id || exploreButton.customId;
-
-            msg.clickButton(buttonId).catch(error => {
-                log.error(`${accountPrefix(state)}Explore click error: ${error.message}`);
-            });
-
-            log.success(`${accountPrefix(state)}🗺️ ACTION: Explore Sylvaris!`);
-        }
-
-        this.scheduleNextCommand();
+        log.warn(`${accountPrefix(state)}⛔ Explore Sylvaris disabled, Adventure dihentikan.`);
         return true;
+    }
 
+    const buttonId = exploreButton.custom_id || exploreButton.customId;
+
+    msg.clickButton(buttonId).catch(error => {
+        log.error(`${accountPrefix(state)}Explore click error: ${error.message}`);
+    });
+
+    log.success(`${accountPrefix(state)}🗺️ ACTION: Explore Sylvaris!`);
+}
+
+this.scheduleNextCommand();
+return true;
+        
     } catch (error) {
         log.error(`${accountPrefix(state)}Handle Adventure Error: ${error.message}`);
         return false;
