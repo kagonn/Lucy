@@ -497,7 +497,7 @@ module.exports = function createSettingsTabs({ escapeHtml }) {
                             </div>
                             <label>Command Pakai Gems</label>
                             <input type="text" name="gemsUseCommand" value="${escapeHtml(gems.useCommand || '')}" placeholder="luse">
-                            <label>Cek Ulang Inventaris (menit)</label>
+                            <label>Jeda Cek Inventaris saat Gems &amp; Lootbox Habis (menit)</label>
                             <input type="number" min="1" name="gemsRecheckMinutes" value="${gems.recheckMinutes ?? 5}" placeholder="5">
                             <label>Jeda sebelum kirim command (ms)</label>
                             <div class="row">
